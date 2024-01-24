@@ -45,7 +45,6 @@ time1 = np.arange(original_sound.shape[0]) / original_sound.shape[0] * length_in
 plt.figure(figsize=(20, 10))
 plt.title(f'{sound1} (orange) {synchronization_wave} (blue)')
 plt.plot(time, sync_wave)
-#plt.plot(time1, original_sound)
 plt.show()
 
 """ PREPROCESSING """
@@ -66,7 +65,6 @@ original_sound = highpass(original_sound[:,None], 0)[:,0]
 def correlate_by_sum(sync, input_array):
     correlated_window = np.array([])
     window = len(sync)
-    print(f'{window} window')
     for i in range(len(input_array)- window + 1):
         # calculate sum of squares for the window & square root
         sum_of_squares = np.sum(np.square(input_array[i:i + window]))
@@ -76,16 +74,13 @@ def correlate_by_sum(sync, input_array):
         # correlate the sync wave and the normalized original sound
         correlated_value = np.sum(normalized_values * sync)
         correlated_window = np.append(correlated_window, correlated_value)
-    # calculate maximal correlation and add window size do get correct index BUT in plot it is still wrong
+    # calculate maximal correlation and add window size to get correct index
     i = np.argmax(correlated_window) + window
     index_in_seconds = i / sample_rate1
     plt.title(f'original sound (red), correlation plot (blue)')
     plt.plot(correlated_window, color='blue')
-    plt.plot( input_array, color='red')
-    # plt.plot(sync, color='yellow')
+    plt.plot(input_array, color='red')
     plt.show()
-    max_corr_value = input_array[i]
     print(f'sync wave in original sound: index {i}, seconds {index_in_seconds}s')
-    print(max_corr_value)
 
 correlate_by_sum(sync_wave, original_sound)
