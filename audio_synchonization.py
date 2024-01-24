@@ -21,15 +21,7 @@ except subprocess.CalledProcessError as e:
 """
 
 """DEFINE SAMPLES"""
-#sound1 = "drzepka_PU_slow_2023-12-02_15.19.18.wav"
-#sound1 = "drzepka_PU_slow_video_extract.wav"
-
 sound1 = "drzepka_PU_medium_2023-12-02_15.19.47.wav"
-#sound1 = "pu_medium.wav"
-
-#sound1 = "drzepka_Silicone_medium_2023-12-02_15.15.51.wav"
-#sound1 = "Silicone_medium_audio.wav"
-
 synchronization_wave = "sync.wav"
 
 # load samples
@@ -71,8 +63,7 @@ original_sound = highpass(original_sound[:,None], 0)[:,0]
 
 
 """ NORMALIZE LOCALLY """
-
-def correlate_by_sum_of_squares(sync, input_array):
+def correlate_by_sum(sync, input_array):
     correlated_window = np.array([])
     window = len(sync)
     print(f'{window} window')
@@ -97,4 +88,4 @@ def correlate_by_sum_of_squares(sync, input_array):
     print(f'sync wave in original sound: index {i}, seconds {index_in_seconds}s')
     print(max_corr_value)
 
-correlate_by_sum_of_squares(sync_wave, original_sound)
+correlate_by_sum(sync_wave, original_sound)
