@@ -78,12 +78,13 @@ def correlate_by_sum(sync, input_array):
         correlated_window = np.append(correlated_window, correlated_value)
     # calculate maximal correlation and add window size to get correct index
     i = np.argmax(correlated_window) + window
-    index_in_seconds = i / sample_rate1
+    wave_window = i - window
+    #index_in_seconds = i / sample_rate1
     plt.title(f'original sound (red), correlation plot (blue)')
     plt.xlabel('indices', fontdict=None, labelpad=None)
     plt.plot(correlated_window, color='blue')
     plt.plot(input_array, color='red')
     plt.show()
-    print(f'sync wave in original sound: index {i}, seconds {index_in_seconds}s')
+    print(f'sync wave in original sound: index {wave_window} - {i}')
 
 correlate_by_sum(sync_wave, original_sound)
