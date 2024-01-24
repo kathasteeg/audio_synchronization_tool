@@ -2,49 +2,51 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import filtfilt
 import librosa
-#import subprocess
+import subprocess
 
 """EXTRACT AUDIO FILE FROM .WEBM FILE WITH FFMPEG"""
-"""
-# path to execute ffmpeg
-ffmpeg_path = r'ffmpeg'
+def extract_audio_from_WEBM(webm_file, audio_extract_name):
+    # path to execute ffmpeg
+    ffmpeg_path = r'ffmpeg'
 
-# convert .webm file to .wav file (extract audio from video file)
-ffmpeg_command = [ffmpeg_path, '-i', 'drzepka_Silicone_medium_2023-12-02_15.15.51.webm', 'Silicone_medium_audio.wav']
+    # convert .webm file to .wav file (extract audio from video file)
+    ffmpeg_command = [ffmpeg_path, '-i', webm_file, audio_extract_name]
 
-# execute FFmpeg from PowerShell
-try:
-    subprocess.run(ffmpeg_command, check=True, shell=True)
-    print("executing ffmpeg was successful")
-except subprocess.CalledProcessError as e:
-    print(f'Error while executing FFmpeg: {e}')
-"""
+    # execute FFmpeg from PowerShell
+    try:
+        subprocess.run(ffmpeg_command, check=True, shell=True)
+        print("executing ffmpeg was successful")
+    except subprocess.CalledProcessError as e:
+        print(f'Error while executing FFmpeg: {e}')
+
 
 """DEFINE SAMPLES"""
-sound1 = "drzepka_PU_medium_2023-12-02_15.19.47.wav"
+sound = "drzepka_PU_medium_2023-12-02_15.19.47.wav"
 synchronization_wave = "sync.wav"
 
 # load samples
-original_sound, sample_rate1 = librosa.load(sound1)
+original_sound, sample_rate1 = librosa.load(sound)
 sync_wave, sample_rate = librosa.load(synchronization_wave)
 
 """ visualize the original sound """
 print(f'{synchronization_wave}: type {sync_wave.dtype}; Sample rate {sample_rate}')
-print(f'{sound1}: type {original_sound.dtype}; Sample rate {sample_rate1}')
+print(f'{sound}: type {original_sound.dtype}; Sample rate {sample_rate1}')
 
 # calculate length of wave in seconds
 length_in_s = sync_wave.shape[0] / sample_rate
 length_in_s1 = original_sound.shape[0] / sample_rate1
 print(f'{synchronization_wave} is {length_in_s} seconds')
-print(f'{sound1} is {length_in_s1} seconds')
+print(f'{sound} is {length_in_s1} seconds')
 
 # determine x (time) achsis
 time = np.arange(sync_wave.shape[0]) / sync_wave.shape[0] * length_in_s
 time1 = np.arange(original_sound.shape[0]) / original_sound.shape[0] * length_in_s1
 #make plot
 plt.figure(figsize=(20, 10))
-plt.title(f'{sound1} (orange) {synchronization_wave} (blue)')
-plt.plot(time, sync_wave)
+plt.title(f'original_sound (red) synchronization_wave (blue)')
+plt.xlabel('time[s]', fontdict=None, labelpad=None)
+plt.plot(time, sync_wave, color='blue')
+plt.plot(time1, original_sound, color='red')
 plt.show()
 
 """ PREPROCESSING """
@@ -78,6 +80,7 @@ def correlate_by_sum(sync, input_array):
     i = np.argmax(correlated_window) + window
     index_in_seconds = i / sample_rate1
     plt.title(f'original sound (red), correlation plot (blue)')
+    plt.xlabel('indices', fontdict=None, labelpad=None)
     plt.plot(correlated_window, color='blue')
     plt.plot(input_array, color='red')
     plt.show()
